@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baltimore Intelligence Hub | Salary Prediction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- Ambient BG -->
+  <div class="bg-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-chart-network"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">Baltimore</span>
+          <span class="brand-sub">Intelligence Hub</span>
+        </div>
+      </div>
+      <nav class="header-badges">
+        <span class="badge badge-live"><span class="dot"></span>Model Active</span>
+        <span class="badge badge-version">v2.0 · SVM</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <i class="fa-solid fa-city"></i>
+      City of Baltimore · Workforce Analytics
+    </div>
+    <h1 class="hero-title">
+      Salary <span class="gradient-text">Intelligence</span><br />Engine
+    </h1>
+    <p class="hero-subtitle">
+      AI-powered salary prediction trained on Baltimore City employee data.
+      Now with <strong>SVM · Random Forest · Linear Regression</strong> model comparison.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-value">14K+</span>
+        <span class="stat-label">Records Analyzed</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">3</span>
+        <span class="stat-label">ML Models</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">SVR</span>
+        <span class="stat-label">Primary Model</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">95%+</span>
+        <span class="stat-label">Avg. Confidence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Layout -->
+  <main class="main-layout">
+
+    <!-- Form Card -->
+    <section class="glass-card form-card" aria-label="Salary Prediction Form">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h2 class="card-title">Predict Salary</h2>
+          <p class="card-desc">Select a model and fill in the employee profile</p>
+        </div>
+        <div class="card-icon-wrap">
+          <i class="fa-solid fa-brain-circuit"></i>
+        </div>
+      </div>
+
+      <!-- ── Model Selector Tabs ── -->
+      <div class="model-tabs" role="tablist" aria-label="ML Model Selection">
+        <button class="model-tab active" data-model="svr" role="tab" aria-selected="true">
+          <i class="fa-solid fa-vector-square"></i>
+          <span class="tab-name">SVR</span>
+          <span class="tab-sub">RBF Kernel</span>
+        </button>
+        <button class="model-tab" data-model="random_forest" role="tab" aria-selected="false">
+          <i class="fa-solid fa-tree"></i>
+          <span class="tab-name">Random Forest</span>
+          <span class="tab-sub">200 Estimators</span>
+        </button>
+        <button class="model-tab" data-model="linear_regression" role="tab" aria-selected="false">
+          <i class="fa-solid fa-chart-line"></i>
+          <span class="tab-name">Linear</span>
+          <span class="tab-sub">Baseline</span>
+        </button>
+      </div>
+
+      <!-- Active Model Info Strip -->
+      <div class="model-info-strip" id="model-info-strip">
+        <i class="fa-solid fa-circle-info"></i>
+        <span id="model-info-text">SVR (Support Vector Regression) with RBF kernel. Excellent for non-linear salary patterns. Requires feature scaling.</span>
+      </div>
+
+      <form id="predict-form" novalidate>
+        <input type="hidden" id="selected_model" name="model_type" value="svr" />
+
+        <!-- Job Title -->
+        <div class="field-group">
+          <label for="job_title" class="field-label">
+            <i class="fa-solid fa-briefcase field-icon"></i>Job Title
+          </label>
+          <div class="select-wrap">
+            <select id="job_title" name="job_title" required>
+              <option value="" disabled selected>Select a position…</option>
+              {% for title in job_titles %}
+              <option value="{{ title }}">{{ title }}</option>
+              {% endfor %}
+            </select>
+            <i class="fa-solid fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- Agency -->
+        <div class="field-group">
+          <label for="agency" class="field-label">
+            <i class="fa-solid fa-building-columns field-icon"></i>Agency / Department
+          </label>
+          <div class="select-wrap">
+            <select id="agency" name="agency" required>
+              <option value="" disabled selected>Select an agency…</option>
+              {% for agency in agencies %}
+              <option value="{{ agency }}">{{ agency }}</option>
+              {% endfor %}
+            </select>
+            <i class="fa-solid fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+
+        <!-- Years of Experience -->
+        <div class="field-group">
+          <label for="years_experience" class="field-label">
+            <i class="fa-solid fa-clock-rotate-left field-icon"></i>
+            Years of Experience
+            <span id="exp-display" class="exp-badge">0 yrs</span>
+          </label>
+          <div class="slider-wrap">
+            <input type="range" id="years_experience" name="years_experience"
+                   min="0" max="40" value="0" step="1" class="exp-slider" />
+          </div>
+          <div class="slider-labels">
+            <span>0</span><span>10</span><span>20</span><span>30</span><span>40</span>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="predict-btn" id="predict-btn">
+          <span class="btn-text">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Generate Prediction
+          </span>
+          <div class="btn-spinner" id="btn-spinner" aria-hidden="true">
+            <div class="spinner-ring"></div>
+          </div>
+        </button>
+      </form>
+    </section>
+
+    <!-- Results Sidebar -->
+    <aside class="results-sidebar">
+
+      <!-- Result Card -->
+      <div class="glass-card result-card" id="result-card" aria-live="polite">
+        <div class="result-idle" id="result-idle">
+          <div class="idle-icon"><i class="fa-solid fa-circle-dashed"></i></div>
+          <p class="idle-text">Your prediction will appear here</p>
+          <p class="idle-sub">Select a model, fill the form, and hit Generate</p>
+        </div>
+
+        <div class="result-active" id="result-active" hidden>
+          <div class="result-header">
+            <span class="result-label">Predicted Annual Salary</span>
+            <span class="result-pill" id="result-model-pill">SVR</span>
+          </div>
+
+          <div class="salary-display">
+            <span class="salary-currency">$</span>
+            <span class="salary-amount" id="salary-amount">0</span>
+          </div>
+
+          <div class="salary-meta">
+            <span id="result-title-tag" class="meta-tag"><i class="fa-solid fa-briefcase"></i> —</span>
+            <span id="result-exp-tag"   class="meta-tag"><i class="fa-solid fa-clock"></i> — yrs</span>
+          </div>
+
+          <div class="confidence-block">
+            <div class="confidence-header">
+              <span class="confidence-label">
+                <i class="fa-solid fa-signal-bars-good"></i>
+                Calculation Confidence
+              </span>
+              <span class="confidence-value" id="confidence-pct">95%</span>
+            </div>
+            <div class="confidence-bar-track">
+              <div class="confidence-bar-fill" id="confidence-bar"></div>
+            </div>
+          </div>
+
+          <div class="salary-range-block">
+            <div class="range-item">
+              <span class="range-label">Low Estimate</span>
+              <span class="range-value" id="salary-low">—</span>
+            </div>
+            <div class="range-divider"></div>
+            <div class="range-item">
+              <span class="range-label">High Estimate</span>
+              <span class="range-value" id="salary-high">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model Comparison Card -->
+      <div class="glass-card compare-card" id="compare-card" hidden>
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Model Comparison</h2>
+            <p class="card-desc">Run all 3 models to compare</p>
+          </div>
+          <div class="card-icon-wrap compare-icon">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+        </div>
+        <div class="compare-rows" id="compare-rows"></div>
+      </div>
+
+      <!-- XAI Card -->
+      <div class="glass-card xai-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Model Insights</h2>
+            <p class="card-desc">Explainable AI · Feature Impact</p>
+          </div>
+          <div class="card-icon-wrap xai-icon">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </div>
+        </div>
+        <div class="xai-features" id="xai-features">
+          <div class="xai-row">
+            <div class="xai-label"><i class="fa-solid fa-briefcase xai-icon-sm"></i><span>Job Title</span></div>
+            <div class="xai-bar-track"><div class="xai-bar-fill" style="width:49%"></div></div>
+            <span class="xai-pct">49%</span>
+          </div>
+          <div class="xai-row">
+            <div class="xai-label"><i class="fa-solid fa-clock xai-icon-sm"></i><span>Experience</span></div>
+            <div class="xai-bar-track"><div class="xai-bar-fill" style="width:30%"></div></div>
+            <span class="xai-pct">30%</span>
+          </div>
+          <div class="xai-row">
+            <div class="xai-label"><i class="fa-solid fa-building xai-icon-sm"></i><span>Agency</span></div>
+            <div class="xai-bar-track"><div class="xai-bar-fill" style="width:13%"></div></div>
+            <span class="xai-pct">13%</span>
+          </div>
+          <div class="xai-row">
+            <div class="xai-label"><i class="fa-solid fa-star xai-icon-sm"></i><span>Seniority Score</span></div>
+            <div class="xai-bar-track"><div class="xai-bar-fill" style="width:5%"></div></div>
+            <span class="xai-pct">5%</span>
+          </div>
+          <div class="xai-row">
+            <div class="xai-label"><i class="fa-solid fa-layer-group xai-icon-sm"></i><span>Exp. Tier</span></div>
+            <div class="xai-bar-track"><div class="xai-bar-fill" style="width:3%"></div></div>
+            <span class="xai-pct">3%</span>
+          </div>
+        </div>
+        <div class="xai-note">
+          <i class="fa-solid fa-circle-info"></i>
+          SVR uses permutation importance. Random Forest uses Gini impurity. Linear Regression uses coefficient magnitude.
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- SVM Info Section -->
+  <section class="svm-section">
+    <div class="svm-inner">
+      <div class="svm-header">
+        <div class="svm-badge"><i class="fa-solid fa-vector-square"></i> SVM Deep Dive</div>
+        <h2 class="svm-title">How <span class="gradient-text">Support Vector Regression</span> Works</h2>
+        <p class="svm-subtitle">Understanding the primary model powering this prediction engine</p>
+      </div>
+      <div class="svm-grid">
+        <div class="svm-card">
+          <div class="svm-card-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+          <h3>RBF Kernel</h3>
+          <p>The Radial Basis Function kernel maps salary features into higher-dimensional space to capture non-linear relationships between job title, agency, and experience.</p>
+        </div>
+        <div class="svm-card">
+          <div class="svm-card-icon"><i class="fa-solid fa-arrows-to-dot"></i></div>
+          <h3>Epsilon-Insensitive Loss</h3>
+          <p>SVR ignores prediction errors smaller than ε (epsilon), producing a more robust model that resists outlier salaries in the Baltimore dataset.</p>
+        </div>
+        <div class="svm-card">
+          <div class="svm-card-icon"><i class="fa-solid fa-sliders"></i></div>
+          <h3>Hyperparameters</h3>
+          <p>Tuned with <strong>C=100</strong> (regularization), <strong>γ=0.1</strong> (kernel width), <strong>ε=0.1</strong> (tube width). GridSearchCV recommended for production.</p>
+        </div>
+        <div class="svm-card">
+          <div class="svm-card-icon"><i class="fa-solid fa-ruler-combined"></i></div>
+          <h3>Feature Scaling Required</h3>
+          <p>SVR is sensitive to feature scale. All inputs are normalized via <code>StandardScaler</code> before training — a critical preprocessing step.</p>
+        </div>
+      </div>
+      <div class="svm-metrics">
+        <div class="metric-pill"><span class="metric-name">Algorithm</span><span class="metric-val">SVR · sklearn</span></div>
+        <div class="metric-pill"><span class="metric-name">Kernel</span><span class="metric-val">RBF</span></div>
+        <div class="metric-pill"><span class="metric-name">C (Regularization)</span><span class="metric-val">100</span></div>
+        <div class="metric-pill"><span class="metric-name">Gamma</span><span class="metric-val">0.1</span></div>
+        <div class="metric-pill"><span class="metric-name">Epsilon</span><span class="metric-val">0.1</span></div>
+        <div class="metric-pill"><span class="metric-name">Scaler</span><span class="metric-val">StandardScaler</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>
+      <i class="fa-solid fa-shield-halved"></i>
+      Baltimore City Workforce Analytics · SVR + Random Forest + Linear Regression ·
+      <span class="footer-accent">Portfolio Project</span>
+    </p>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
